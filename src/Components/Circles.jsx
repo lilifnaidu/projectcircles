@@ -1,77 +1,85 @@
-import React, { useState } from 'react';
 
-const Circletask = () => {
-  const [circle, setCircle] = useState([]);
-  const [backgroundColor, setBackgroundColor] = useState("white");
+import React, { useState } from 'react'
 
-  const handleClick = (e) => {
-    if (circle.length >= 2) {
-      setBackgroundColor("white");//need to chanege the color
-      setCircle([]); // Reset circles if there are already 2 circles
-      return;
+const Taskcircle = () => {
+const [backgroundcolor,setBackgroundColor]=useState("white")
+const [circles,setcircles]=useState([])
+    const handletheclick=(e)=>{
+        if (circles.length>=2) {
+            setcircles([])
+            setBackgroundColor("white")
+            return;
+        }
+        console.log(e);
+        console.log(Math.floor(Math.random()*10),"done");
+        
+            const radius=Math.floor(Math.random()*(200-20+1))+20
+            const randomColor = `rgb(${Math.floor(Math.random() * 256)}, ${Math.floor(
+                Math.random() * 256)}, ${Math.floor(Math.random() * 256)})`;// to genereate random color  "rgb(255, 0, 0)" this is how usually generate colors
+            console.log(radius);
+            const createdcircle={
+                x:e.clientX,
+                y:e.clientY,
+                radius,
+                color:randomColor
+            }
+            console.log(createdcircle.x,radius);
+            console.log(createdcircle.y,radius);
+
+            const intersects=circles.some((extractcircles)=>{
+                    const dx=createdcircle.x-extractcircles.x
+                    const dy=createdcircle.y-extractcircles.y
+                    const dist=Math.sqrt(dx*dx+dy*dy)
+                    return dist<(createdcircle.radius+extractcircles.radius)
+
+            })
+            if (intersects) {
+                setBackgroundColor("red")
+            }else{
+                setBackgroundColor("white")
+            }
+            
+            setcircles((prev)=>[...prev,createdcircle])
+            console.log(circles,"circuted");
+            
+        
     }
-
-    console.log(e); // Logs the event object (e) to the console.
-
-    const radius = Math.floor(Math.random() * (200 - 20 + 1)) + 20;
-    console.log(radius);
-
-    const newCircle = {
-      x: e.clientX,
-      y: e.clientY,
-      radius,//radius that we created recenltyy
-    };
-
-    console.log(newCircle.x, radius); // Logs the new circle's coordinates and radius of x
-    console.log(newCircle.y, radius); // Logs the new circle's coordinates and radius of y
-    // Check for intersection with existing circles
-    const intersects = circle.some((existingCircle) => {
-      const nx = newCircle.x - existingCircle.x; // (x2 - x1)
-      const ny = newCircle.y - existingCircle.y; // (y2 - y1)
-      const dist = Math.sqrt(nx * nx + ny * ny); // Calculate distance
-      return dist < newCircle.radius + existingCircle.radius; // Check for intersection
-    });
-
-    if (intersects) {
-      setBackgroundColor("red"); // Set background to red when circles intersect
-    } else {
-      setBackgroundColor("white"); // Set background to white when no intersection
-    }
-
-    setCircle((prevValues) => [...prevValues, newCircle]); // Add the new circle to the array
-
-    console.log(circle, "this is circle");
-    console.log("new formed ,", newCircle.x - newCircle.radius);
-  };
-
   return (
-    <>
-      <div
-        onClick={handleClick}
-        style={{
-          height: "100vh",
-          width: "100vw",
-          backgroundColor: backgroundColor,
-          position: "relative",
-        }}
-      >
-        {circle.map((circ, index) => (
-          <div
-            key={index}
-            style={{
-              position: "absolute",
-              top: circ.y - circ.radius + "px",
-              left: circ.x - circ.radius + "px",
-              width: 2 * circ.radius + "px",
-              height: 2 * circ.radius + "px",
-              borderRadius: "50%",
-              backgroundColor: "orange",
-            }}
-          ></div>
-        ))}
-      </div>
-    </>
-  );
-};
+  <>
+    <div onClick={handletheclick} style={{
+        backgroundColor:backgroundcolor,
+        width:"100vw",
+        height:"100vh",
+        position:"relative",
+        
 
-export default Circletask;
+    }}>{
+        
+            circles.length === 0 && "Click anywhere to create a circle" 
+    }
+        {
+            circles.map((details,index)=>(
+                  <div key={index} style={{
+                    backgroundColor:details.color,//here i have utilised randome colors paryt
+                    position:"absolute",
+                    left:details.x-details.radius+"px",
+                    top:details.y-details.radius+"px",
+                    width:2*details.radius+"px",
+                    height:2*details.radius+"px",
+                    borderRadius:"50%",
+                    boxShadow: "0px 15px 25px rgba(0, 0, 0, 0.35)", 
+                    //here i want show when they are intersected we need to show its intersected
+                  }}>
+
+                  </div>
+            ))
+        }
+       
+       
+    </div>
+  
+  </>
+  )
+}
+
+export default Taskcircle
